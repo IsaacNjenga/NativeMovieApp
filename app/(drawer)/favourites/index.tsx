@@ -1,6 +1,4 @@
-import { View, Text } from 'react-native';
-import React from 'react';
-import { Container, Title } from '~/tamagui.config';
+import { Container } from '~/tamagui.config';
 import { Favorite } from '~/interfaces/favourites';
 import { useMMKVObject } from 'react-native-mmkv';
 import { Image, ListItem, Main, ScrollView } from 'tamagui';
@@ -15,6 +13,7 @@ const Page = () => {
         <ScrollView>
           {favourites?.map((fav) => (
             <Link
+              key={fav.id}
               href={{
                 pathname:
                   fav.mediaType === 'movie'
@@ -25,18 +24,17 @@ const Page = () => {
               asChild>
               <ListItem
                 theme={'alt2'}
-                backgroundColor={'#fff'}
                 title={fav.name}
-                size={'$4'}
+                backgroundColor={'#00152a'}
+                size={'$5'}
+                pressStyle={{ backgroundColor: '#f0f0f0' }}
                 icon={() => (
                   <Animated.Image
                     source={{ uri: `https://image.tmdb.org/t/p/w500${fav.thumb}` }}
-                    style={{ width: 50, height: 50 }}
+                    style={{ width: 50, height: 75 }}
                     sharedTransitionTag={`${fav.mediaType === 'movie' ? 'movie' : 'tv'}-${fav.id}`}
                   />
-                )}
-                pressStyle={{ backgroundColor: '#f0f0f0' }}
-                ></ListItem>{' '}
+                )}></ListItem>
             </Link>
           ))}
         </ScrollView>

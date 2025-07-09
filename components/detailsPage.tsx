@@ -54,7 +54,7 @@ const DetailsPage = ({ id, mediaType }: DetailsPageProps) => {
                 name={isFavorite ? 'heart' : 'heart-outline'}
                 size={24}
                 scale={0.95}
-                color={isFavorite ? theme.red11.get() : '#fff'}
+                color={isFavorite ? theme.red9.get() : '#fff'}
                 hoverStyle={{ scale: 0.925 }}
                 pressStyle={{ scale: 0.975 }}
                 animation={'bouncy'}
