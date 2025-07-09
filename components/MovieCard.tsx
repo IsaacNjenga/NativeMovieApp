@@ -14,7 +14,7 @@ const MovieCard = ({ movie }: MovieCardProps) => {
       <Card
         elevate
         width={150}
-        height={260}
+        height={280}
         scale={0.9}
         hoverStyle={{ scale: 0.925 }}
         pressStyle={{ scale: 0.975 }}
@@ -31,9 +31,9 @@ const MovieCard = ({ movie }: MovieCardProps) => {
             style={{ width: 150, height: 200 }}
           />
         </Card.Header>
-        <Card.Footer p={8}>
+        <Card.Footer p={10}>
           <YStack>
-            <Text fontSize={20} color={'lightblue'} >
+            <Text fontSize={20} color={'lightblue'}>
               {movie.title || movie.name}
             </Text>
             <Paragraph theme={'alt2'}>

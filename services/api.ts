@@ -32,7 +32,27 @@ export const discoverList = async () //   mediaType: MediaType.Movie,
       throw new Error(`Error ${response.status}: ${response.statusText}`);
     }
 
-    const json = response.json();
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const searchList = async (query: string) => {
+  try {
+    const response = await fetch(
+      `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&page=1`,
+      {
+        headers: { accept: 'application/json', Authorization: `Bearer ${header}` },
+      }
+    );
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    }
+
+    const json = await response.json();
     return json;
   } catch (error) {
     console.error(error);

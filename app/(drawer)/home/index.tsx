@@ -2,16 +2,23 @@ import { ImageBackground } from 'react-native';
 import { Input, Main, ScrollView, Spinner, YStack } from 'tamagui';
 import { Container, Subtitle, Title } from '~/tamagui.config';
 import { useQuery } from '@tanstack/react-query';
-import { discoverList, getList } from '~/services/api';
+import { discoverList, getList, searchList } from '~/services/api';
 import { useState } from 'react';
 import MovieCard from '~/components/MovieCard';
+import useDebounce from '~/utils/useDebounce';
+import { Result } from '~/interfaces/apiResults';
 
 const Page = () => {
+  const [searchString, setSearchString] = useState('');
+  const debouncedString = useDebounce(searchString, 300);
+
   const listQuery = useQuery({ queryKey: ['list'], queryFn: getList });
-
-  const discoverQuery = useQuery({ queryKey: ['list'], queryFn: discoverList });
-
- const [searchString, setSearchString] = useState('');
+  const discoverQuery = useQuery({ queryKey: ['discoverList'], queryFn: discoverList });
+  const searchQuery = useQuery<{ results: Result[] }>({
+    queryKey: ['searchList', debouncedString],
+    queryFn: () => searchList(debouncedString),
+    enabled: debouncedString.length > 0,
+  });
 
   return (
     <Main>
@@ -36,7 +43,7 @@ const Page = () => {
         </Container>
       </ImageBackground>
       <Subtitle p={10} animation={'lazy'} enterStyle={{ opacity: 0 }}>
-        Trending
+        {searchQuery.data?.results ? 'Search Results: ' : 'Discover Movies'}
       </Subtitle>
 
       {(discoverQuery.isLoading || listQuery.isLoading) && (
@@ -48,11 +55,25 @@ const Page = () => {
         showsHorizontalScrollIndicator={false}
         py={40}
         contentContainerStyle={{ gap: 14, paddingLeft: 14 }}>
-        {discoverQuery.data?.results && (
+        {searchQuery.data?.results ? (
           <>
-            {discoverQuery.data?.results.map((item) => (
-              <MovieCard key={item.id} movie={item} />
-            ))}
+            {searchQuery.data?.results && (
+              <>
+                {searchQuery.data?.results.map((item) => (
+                  <MovieCard key={item.id} movie={item} />
+                ))}
+              </>
+            )}
+          </>
+        ) : (
+          <>
+            {discoverQuery.data?.results && (
+              <>
+                {discoverQuery.data?.results.map((item) => (
+                  <MovieCard key={item.id} movie={item} />
+                ))}
+              </>
+            )}
           </>
         )}
       </ScrollView>
