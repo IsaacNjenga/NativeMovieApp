@@ -1,9 +1,13 @@
 import { View, Text } from 'react-native';
 import React from 'react';
-import { Redirect } from 'expo-router';
+import { Title } from '~/tamagui.config';
 
 const Page = () => {
-  return <Redirect href={'/(drawer)/home'} />;
+  return (
+    <View>
+      <Title>Favourites</Title>
+    </View>
+  );
 };
 
 export default Page;
