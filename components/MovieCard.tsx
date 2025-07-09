@@ -1,34 +1,39 @@
 import { Link } from 'expo-router';
-import { Card, Image, Paragraph, Text, YStack } from 'tamagui';
+import Animated from 'react-native-reanimated';
+import { Card, Paragraph, Text, YStack } from 'tamagui';
 import { Result } from '~/interfaces/apiResults';
 
-const header = process.env.EXPO_PUBLIC_HEADER_KEY;
 const fallImg = 'https://pbs.twimg.com/media/GvXufs-XkAAFRYv?format=jpg&name=small';
 
-type MovieCardProps = { movie: Result };
+type MovieCardProps = { movie: Result; mediaType: 'movie' | 'tv' };
 
-//add tv type
-const MovieCard = ({ movie }: MovieCardProps) => {
+const MovieCard = ({ movie, mediaType }: MovieCardProps) => {
   return (
-    <Link href={`/(drawer)/home/movie/${movie.id}`} asChild>
+    <Link
+      href={{
+        pathname: `/(drawer)/home/${mediaType === 'movie' ? 'movie' : 'tv'}/[id]`,
+        params: { id: movie.id.toString() },
+      }}
+      asChild>
       <Card
         elevate
-        width={150}
-        height={280}
+        width={180}
+        height={300}
         scale={0.9}
         hoverStyle={{ scale: 0.925 }}
         pressStyle={{ scale: 0.975 }}
         animation={'bouncy'}
         backgroundColor={'#030b2e'}>
         <Card.Header p={0}>
-          <Image
+          <Animated.Image
             source={{
               uri: movie.poster_path
                 ? `https://image.tmdb.org/t/p/w200${movie.poster_path}`
                 : fallImg,
             }}
             alt={movie.title}
-            style={{ width: 150, height: 200 }}
+            style={{ width: 180, height: 200 }}
+            sharedTransitionTag={`${movie.media_type === 'movie' ? 'movie' : 'tv'}-${movie.id}`}
           />
         </Card.Header>
         <Card.Footer p={10}>

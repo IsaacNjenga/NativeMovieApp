@@ -2,18 +2,21 @@ import { ImageBackground } from 'react-native';
 import { Input, Main, ScrollView, Spinner, YStack } from 'tamagui';
 import { Container, Subtitle, Title } from '~/tamagui.config';
 import { useQuery } from '@tanstack/react-query';
-import { discoverList, getList, searchList } from '~/services/api';
+import { discoverMoviesList, discoverTVList, getList, searchList } from '~/services/api';
 import { useState } from 'react';
 import MovieCard from '~/components/MovieCard';
 import useDebounce from '~/utils/useDebounce';
 import { Result } from '~/interfaces/apiResults';
+
+//type PageProps = {id:string, mediaType: MediaY};
 
 const Page = () => {
   const [searchString, setSearchString] = useState('');
   const debouncedString = useDebounce(searchString, 300);
 
   const listQuery = useQuery({ queryKey: ['list'], queryFn: getList });
-  const discoverQuery = useQuery({ queryKey: ['discoverList'], queryFn: discoverList });
+  const discoverMoviesQuery = useQuery({ queryKey: ['discoverList'], queryFn: discoverMoviesList });
+  const discoverTVQuery = useQuery({ queryKey: ['discoverTVList'], queryFn: discoverTVList });
   const searchQuery = useQuery<{ results: Result[] }>({
     queryKey: ['searchList', debouncedString],
     queryFn: () => searchList(debouncedString),
@@ -23,12 +26,19 @@ const Page = () => {
   return (
     <Main>
       <ImageBackground
-        source={{ uri: 'https://pbs.twimg.com/media/GvSDwPiXwAAAN4L?format=jpg&name=small' }}
-        style={{ width: '100%', height: 200 }}>
+        source={{
+          uri: 'https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?w=900&auto=format&fit=crop&q=60',
+        }}
+        style={{ width: '100%', height: 250, backdropFilter: 'blur(4px)' }}>
         <Container>
-          <YStack>
-            <Title color="#fff" enterStyle={{ opacity: 0, scale: 1.5, y: -10 }} animation="quick">
-              Trending
+          <YStack backgroundColor={'rgba(0,0,0,0.4)'} borderRadius={16} p={5}>
+            <Title
+              color="#fff"
+              enterStyle={{ opacity: 0, scale: 1.5, y: -10 }}
+              animation="quick"
+              borderRadius={16}
+              p={10}>
+              Movies & TV
             </Title>
             <Input
               placeholder="Search..."
@@ -46,31 +56,64 @@ const Page = () => {
         {searchQuery.data?.results ? 'Search Results: ' : 'Discover Movies'}
       </Subtitle>
 
-      {(discoverQuery.isLoading || listQuery.isLoading) && (
+      {(discoverMoviesQuery.isLoading || searchQuery.isLoading) && (
         <Spinner size="large" color={'$blue10'} py={14} />
       )}
 
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        py={40}
-        contentContainerStyle={{ gap: 14, paddingLeft: 14 }}>
+        py={10}
+        contentContainerStyle={{ gap: 14, paddingLeft: 14 }}
+        backgroundColor={'$background'}>
         {searchQuery.data?.results ? (
           <>
             {searchQuery.data?.results && (
               <>
                 {searchQuery.data?.results.map((item) => (
-                  <MovieCard key={item.id} movie={item} />
+                  <MovieCard key={item.id} movie={item} mediaType="movie" />
                 ))}
               </>
             )}
           </>
         ) : (
           <>
-            {discoverQuery.data?.results && (
+            {discoverMoviesQuery.data?.results && (
               <>
-                {discoverQuery.data?.results.map((item) => (
-                  <MovieCard key={item.id} movie={item} />
+                {discoverMoviesQuery.data?.results.map((item) => (
+                  <MovieCard key={item.id} movie={item} mediaType="movie" />
+                ))}
+              </>
+            )}
+          </>
+        )}
+      </ScrollView>
+
+      <Subtitle p={10} animation={'lazy'} enterStyle={{ opacity: 0 }}>
+        {searchQuery.data?.results ? 'Search Results: ' : 'Discover TV'}
+      </Subtitle>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        py={10}
+        contentContainerStyle={{ gap: 14, paddingLeft: 14 }}>
+        {searchQuery.data?.results ? (
+          <>
+            {searchQuery.data?.results && (
+              <>
+                {searchQuery.data?.results.map((item) => (
+                  <MovieCard key={item.id} movie={item} mediaType="tv" />
+                ))}
+              </>
+            )}
+          </>
+        ) : (
+          <>
+            {discoverTVQuery.data?.results && (
+              <>
+                {discoverTVQuery.data?.results.map((item) => (
+                  <MovieCard key={item.id} movie={item} mediaType="tv" />
                 ))}
               </>
             )}
