@@ -1,9 +1,7 @@
-import { View, Text } from 'react-native';
-import React from 'react';
 import { Stack } from 'expo-router';
-import { colorTokens } from '@tamagui/themes';
 import { DrawerToggleButton } from '@react-navigation/drawer';
 import { useTheme } from 'tamagui';
+
 
 const Layout = () => {
   const theme = useTheme();
